@@ -13,9 +13,9 @@ from ..builder import build_loss
 from ..losses import accuracy
 from ..losses.fusion_loss import Fusionloss
 
-class FusionModule_(nn.Module):
+class FusionModule(nn.Module):
     def __init__(self):
-        super(FusionModule_, self).__init__()
+        super(FusionModule, self).__init__()
 
         # ----------------- 低分辨率分支处理 -----------------
 
@@ -119,9 +119,9 @@ class FusionModule_(nn.Module):
 
         return output        
     
-class FusionModule(nn.Module):
+class FusionModule_(nn.Module):
     def __init__(self):
-        super(FusionModule, self).__init__()
+        super(FusionModule_, self).__init__()
         """low resolution"""
         self.low_conv1 = nn.Sequential(
             nn.Conv2d(256, 128, 3, padding=1, groups=128),

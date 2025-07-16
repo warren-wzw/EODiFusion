@@ -4,19 +4,20 @@ os.chdir(sys.path[0])
 from argparse import ArgumentParser
 from model.apis import inference_segmentor, init_segmentor, show_result_pyplot
 from model.core.evaluation import get_palette
-FILENAME="00332D.png"
+FILENAME="2076.png"
+CHECKPOINT='./exps/EODiFusionV1/iter_100000.pth'
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument('--img', default=f"./dataset/testimages/vi/{FILENAME}",
+    parser.add_argument('--img', default=f"/home/BlueDisk/Dataset/FusionDataset/RGBT/OverExposure/test/vi/{FILENAME}",
                         help='rgb file')
-    parser.add_argument('--ir',default=f"./dataset/testimages/ir/{FILENAME}",
+    parser.add_argument('--ir',default=f"/home/BlueDisk/Dataset/FusionDataset/RGBT/OverExposure/test/ir/{FILENAME}",
                         help='ir file')
     parser.add_argument('--fusion_img',default=f"./out/fusion/{FILENAME}",
                          help='Image file')
-    parser.add_argument('--config', default="configs/DiFusionSeg_config.py",
+    parser.add_argument('--config', default="configs/config.py",
                         help='Config file')
-    parser.add_argument('--checkpoint', default="./exps/Done/msrs_vi_ir_meanstd_ConvNext_fusioncomplex_8083/best.pth",
+    parser.add_argument('--checkpoint', default=CHECKPOINT,
                         help='Checkpoint file')
     parser.add_argument('--segout', default=f"./out/seg/{FILENAME}", 
                         help='Path to output file')

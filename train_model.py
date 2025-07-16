@@ -7,6 +7,7 @@ import os.path as osp
 import time
 import warnings
 warnings.filterwarnings("ignore", message=".*MMCV will release v2.0.0.*")
+warnings.filterwarnings("ignore", category=UserWarning, message="torch.meshgrid.*indexing")
 import mmcv
 import torch
 import torch.distributed as dist
@@ -16,9 +17,9 @@ from model import __version__
 from model.apis import init_random_seed, set_random_seed, train_segmentor
 from model.datasets import build_dataset
 from model.models import build_segmentor
-from model.utils import (collect_env, get_device, get_root_logger,setup_multi_processes,PrintModelInfo)
+from model.utils import (collect_env, get_device, get_root_logger,setup_multi_processes,PrintModelInfo,count_params)
 SAVEPATH='./exps/Fusion_test'
-PRETRAIN='./exps/BestMSRS/best.pth'
+PRETRAIN='./exps/EODiFusionV1/iter_100000.pth'
 
 os.environ['MASTER_ADDR'] = '127.0.0.1'
 os.environ['MASTER_PORT'] = '29500'
@@ -27,7 +28,7 @@ os.environ['RANK'] = '0'
     
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a segmentor')
-    parser.add_argument('--config',default="./configs/DiFusionSeg_config.py",
+    parser.add_argument('--config',default="./configs/config.py",
                         help='train config file path')
     parser.add_argument('--resume-from', 
                         help='the checkpoint file to resume from')
@@ -40,7 +41,7 @@ def parse_args():
                         help='ids of gpus to use (only applicable to non-distributed training)')
     group_gpus.add_argument('--gpu-id',type=int,default=[0,1],
                         help='id of gpu to use (only applicable to non-distributed training)')
-    parser.add_argument('--seed', type=int,default=None, 
+    parser.add_argument('--seed', type=int,default=2022, 
                         help='random seed')
     parser.add_argument('--diff_seed',action='store_true',
                         help='Whether or not set different seeds for different ranks')
@@ -96,6 +97,7 @@ def main():
         train_cfg=cfg.get('train_cfg'),
         test_cfg=cfg.get('test_cfg'))
     PrintModelInfo(model)
+    count_params(model)
     datasets = [build_dataset(cfg.data.train)]
     cfg.checkpoint_config.meta = dict(
         mmseg_version=f'{__version__}+{get_git_hash()[:7]}',

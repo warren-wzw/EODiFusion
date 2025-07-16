@@ -5,6 +5,9 @@ os.environ["CUDA_VISIBLE_DEVICES"]='0'
 import argparse
 import shutil
 import warnings
+warnings.filterwarnings("ignore", message=".*MMCV will release v2.0.0.*")
+warnings.filterwarnings("ignore", category=UserWarning, message="torch.meshgrid.*indexing")
+    
 import mmcv
 import torch
 from mmcv.cnn.utils import revert_sync_batchnorm
@@ -18,8 +21,8 @@ from model.models import build_segmentor
 from model.utils import build_difusionseg, get_device,PrintModelInfo,count_params
 """please use RTX4090 to fork the results"""
 GPU=0
-CONFIG='./configs/DiFusionSeg_config.py'
-CHECKPOINT='./exps/Fusion_test/iter_60000.pth'
+CONFIG='./configs/config.py'
+CHECKPOINT='./exps/EODiFusionV1/iter_100000.pth'
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -138,7 +141,7 @@ def main():
             'Please use MMCV >= 1.4.4 for CPU training!'
     model = revert_sync_batchnorm(model)
     model = build_difusionseg(model, cfg.device, device_ids=cfg.gpu_ids)
-    #PrintModelInfo(model)
+    PrintModelInfo(model)
     count_params(model)
     results = single_gpu_test(
         model,

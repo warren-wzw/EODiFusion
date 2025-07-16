@@ -128,25 +128,22 @@ class EncoderDecoder(BaseSegmentor):
         return losses
 
     def _decode_head_forward_test(self, x, img_metas):
-        """Run forward function and calculate loss for decode head in
-        inference."""
-        seg_logits = self.decode_head.forward_test(x, img_metas, self.test_cfg)
+        seg_logits = self.auxiliary_head.forward_test(x, img_metas, self.test_cfg)
+        return seg_logits
+    
+    def _auxiliary_head_forward_test(self, x, img_metas):
+        seg_logits = self.auxiliary_head.forward_test(
+            x, img_metas,self.test_cfg)
         return seg_logits
 
     def _auxiliary_head_forward_train(self, x, img_metas, gt_semantic_seg):
         """Run forward function and calculate loss for auxiliary head in
         training."""
         losses = dict()
-        if isinstance(self.auxiliary_head, nn.ModuleList):#skip
-            for idx, aux_head in enumerate(self.auxiliary_head):
-                loss_aux = aux_head.forward_train(x, img_metas,
-                                                  gt_semantic_seg,
-                                                  self.train_cfg)
-                losses.update(add_prefix(loss_aux, f'aux_{idx}'))
-        else:
-            loss_aux = self.auxiliary_head.forward_train(
-                x, img_metas, gt_semantic_seg, self.train_cfg)
-            losses.update(add_prefix(loss_aux, 'aux'))
+
+        loss_aux = self.auxiliary_head.forward_train(
+            x, img_metas, gt_semantic_seg, self.train_cfg)
+        losses.update(add_prefix(loss_aux, 'aux'))
 
         return losses
 

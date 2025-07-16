@@ -9,7 +9,7 @@ train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadIrFromFile'),
     dict(type='LoadAnnotations'),
-    dict(type='Resize', img_scale=(640, 480), ratio_range=(0.5, 2.0)),
+    dict(type='Resize', img_scale=(W, H), ratio_range=(0.5, 2.0)),
     dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     dict(type='RandomFlip', prob=0.5),#deepcopy
     dict(type='PhotoMetricDistortion'),
@@ -23,7 +23,7 @@ test_pipeline = [
     dict(type='LoadIrFromFile'),
     dict(
         type='MultiScaleFlipAug',
-        img_scale=(640, 480),
+        img_scale=(W, H),
         flip=False,
         transforms=[
             dict(type='Resize', keep_ratio=True),
